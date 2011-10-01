@@ -1,0 +1,38 @@
+#board {
+  margin: 0;
+  padding: 0;
+}
+
+.square {
+  margin: 0;
+  padding: 0;
+  border: 1px black solid;
+  width: 48px;
+  height: 48px;
+  float: left;
+  background-color: #ffee55
+}
+
+.nextrow {
+  float: none;
+}
+
+.stone {
+    width: 50px;
+    height: 50px;
+    font-size: 50px;
+    text-align: center;
+    position: absolute;
+}
+
+.white {
+      background-image: url('white50.png');
+}
+
+.black {
+    background-image: url('black50.png');
+}
+
+.empty {
+    background-color: #ffee55;
+}
