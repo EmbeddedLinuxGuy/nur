@@ -1,6 +1,6 @@
 <script>
 // UTILITY
-$ = function(id) { return /^</.test(id) ? document.createElement(id.substring(1, id.length - 1)) : document.getElementById(id); }
+//$ = function(id) { return /^</.test(id) ? document.createElement(id.substring(1, id.length - 1)) : document.getElementById(id); }
 parseDateTime = function(datetime) { var d = new Date(Date.parse(datetime.replace('T', ' ').replace(/\-/g, '/'))), h = d.getHours(), m = d.getMinutes(), s = d.getSeconds(); if (m < 10) { m = '0' + m; }; if (s < 10) { s = '0' + s; }; return [h, m, s].join(':'); }
 
 // UI
