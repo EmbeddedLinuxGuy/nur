@@ -1,4 +1,3 @@
-<script src="//modernhacker.com:8001/static/hookbox.js"></script>
 <script>
 // UTILITY
 $ = function(id) { return /^</.test(id) ? document.createElement(id.substring(1, id.length - 1)) : document.getElementById(id); }
