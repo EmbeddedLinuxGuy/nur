@@ -79,11 +79,14 @@ GO.respondToClick = function (event) {
     GO.vertex = { x : Math.round(GO.current.x/GO.square),
 		  y : Math.round(GO.current.y/GO.square)
     };
-
+    console.log(GO.vertex.x + ", " + GO.vertex.y);
     //    GO.glog(GO.state[GO.vertex.y][GO.vertex.x]);
     //    GO.glog(GO.vertex.x);
+
+    // call publish
+    conn.publish('chat', "GO.place(" + GO.vertex.x + "," + GO.vertex.y + ",'')" )
     
-    GO.place(GO.vertex.x, GO.vertex.y, '')
+    //    GO.place(GO.vertex.x, GO.vertex.y, '')
 }
 
 GO.place = function (x, y, n) {
