@@ -32,6 +32,18 @@ Let's Play Nurikabe
 <script src="prototype.js"></script>
 <script src="nur.js"></script>
 <script>
+var toggle = "white";
+$("board").oncontextmenu = function(e) {
+  if (toggle === "white") {
+    document.body.style.cursor = "url(cursor2.cur) 25 25, url(cursor2/cursor2.cur) 25 25, default";
+    toggle = "black";
+  } else {
+    document.body.style.cursor = "url(cursor.cur) 25 25, url(cursor/cursor.cur) 25 25, default";
+    toggle = "white";
+  }
+  return false;
+}
+
 // UTILITY
 elt = function(id) { return /^</.test(id) ? document.createElement(id.substring(1, id.length - 1)) : document.getElementById(id); }
 parseDateTime = function(datetime) { var d = new Date(Date.parse(datetime.replace('T', ' ').replace(/\-/g, '/'))), h = d.getHours(), m = d.getMinutes(), s = d.getSeconds(); if (m < 10) { m = '0' + m; }; if (s < 10) { s = '0' + s; }; return [h, m, s].join(':'); }

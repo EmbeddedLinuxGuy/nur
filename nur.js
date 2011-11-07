@@ -3,7 +3,8 @@ var GO = {
     origin : { x : 0, y : 0},
     current : { x : 0, y : 0},
     state : [],
-    id : null
+    id : null,
+    cursor : "white"
 };
 
 GO.puzzle = [
