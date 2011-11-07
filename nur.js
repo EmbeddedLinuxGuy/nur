@@ -60,7 +60,8 @@ GO.init = function (id) {
 	for (x = 0; x < GO.width; ++x) {
 	    GO.state[y][x] = GO.puzzle[y].substring(x, x+1);
 	    if (GO.state[y][x] !== '.') {
-		GO.place(x, y, GO.state[y][x]);
+		//		GO.place(x, y, GO.state[y][x]);
+		GO.update_board('white', x, y, GO.state[y][x]);
 	    }
 	}
     }
@@ -85,30 +86,36 @@ GO.respondToClick = function (event) {
     //    GO.glog(GO.vertex.x);
 
     // call publish
-    conn.publish('chat', "GO.place(" + GO.vertex.x + "," + GO.vertex.y + ",'')" )
+    conn.publish('chat', "GO.place(" + GO.vertex.x + "," + GO.vertex.y + ")" )
     
     //    GO.place(GO.vertex.x, GO.vertex.y, '')
 }
 
-GO.place = function (x, y, n) {
+GO.place2 = function (x, y, n) {
     var color;
-    if (n === '') {
-	if (GO.state[y][x] === '.') {
-	    GO.state[y][x] = 'b';
-	    color = 'black';
-	} else if (GO.state[y][x] === 'w') {
-	    GO.state[y][x] = '.';
-	    color = 'empty';
-	} else if (GO.state[y][x] === 'b') {
-	    GO.state[y][x] = 'w';
-	    color = 'white';
-	} else {
-	    return; // Don't override initial stones
-	}
-    } else {
-	color = 'white';
-    }
+    if (n === 0) {}
+}
 
+GO.place = function (x, y) {
+    var color;
+    if (GO.state[y][x] === '.') {
+	color = GO.cursor;
+	GO.state[y][x] = color.charAt(0);
+	console.log("Color " + color + ", code " + GO.state[y][x]);
+    } else if (GO.state[y][x] === 'w') {
+	GO.state[y][x] = '.';
+	color = 'empty';
+    } else if (GO.state[y][x] === 'b') {
+	GO.state[y][x] = 'w';
+	color = 'empty';
+    } else {
+	return; // Don't override initial stones
+    }
+    GO.update_board(color, x, y, '');
+}
+
+// n: number on starting white piece
+GO.update_board = function (color, x, y, n) {
     $(GO.id).innerHTML +=
 
     '<div class="stone '

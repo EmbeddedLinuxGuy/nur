@@ -32,14 +32,13 @@ Let's Play Nurikabe
 <script src="prototype.js"></script>
 <script src="nur.js"></script>
 <script>
-var toggle = "white";
 $("board").oncontextmenu = function(e) {
-  if (toggle === "white") {
+  if (GO.cursor === "white") {
     document.body.style.cursor = "url(cursor2.cur) 25 25, url(cursor2/cursor2.cur) 25 25, default";
-    toggle = "black";
+    GO.cursor = "black";
   } else {
     document.body.style.cursor = "url(cursor.cur) 25 25, url(cursor/cursor.cur) 25 25, default";
-    toggle = "white";
+    GO.cursor = "white";
   }
   return false;
 }
