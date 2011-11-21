@@ -5,7 +5,7 @@
  <link rel="stylesheet" href="nur.css" type="text/css">
 <style>
 body { font: 16px Helvetica, Arial, sans-serif; font-weight: bold; padding: 40px; background: #88A;
- cursor: url(cursor.cur) 25 25, url(cursor/cursor.cur) 25 25, default;
+ cursor: url(cursor.cur) 25 25, default;
 }
 .box { border: 3px solid #EEE; -moz-border-radius: 5px; -webkit-border-radius: 5px; }
 #history { height: 200px; width: 400px; background: #FFF; padding: 10px; overflow: auto;  margin: 0px auto 5px; }
@@ -32,13 +32,14 @@ Let's Play Nurikabe
 <script src="prototype.js"></script>
 <script src="nur.js"></script>
 <script>
+var toggle = "white";
 $("board").oncontextmenu = function(e) {
-  if (GO.cursor === "white") {
-    document.body.style.cursor = "url(cursor2.cur) 25 25, url(cursor2/cursor2.cur) 25 25, default";
-    GO.cursor = "black";
+  if (toggle === "white") {
+    document.body.style.cursor = "url(cursor2.cur) 25 25, default";
+    toggle = "black";
   } else {
-    document.body.style.cursor = "url(cursor.cur) 25 25, url(cursor/cursor.cur) 25 25, default";
-    GO.cursor = "white";
+    document.body.style.cursor = "url(cursor.cur) 25 25, default";
+    toggle = "white";
   }
   return false;
 }

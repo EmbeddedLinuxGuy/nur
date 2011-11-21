@@ -60,8 +60,7 @@ GO.init = function (id) {
 	for (x = 0; x < GO.width; ++x) {
 	    GO.state[y][x] = GO.puzzle[y].substring(x, x+1);
 	    if (GO.state[y][x] !== '.') {
-		//		GO.place(x, y, GO.state[y][x]);
-		GO.update_board('white', x, y, GO.state[y][x]);
+		GO.place(x, y, GO.state[y][x]);
 	    }
 	}
     }
@@ -86,50 +85,69 @@ GO.respondToClick = function (event) {
     //    GO.glog(GO.vertex.x);
 
     // call publish
-    conn.publish('chat', "GO.place(" + GO.vertex.x + "," + GO.vertex.y + ")" )
+    conn.publish('chat', "GO.place(" + GO.vertex.x + "," + GO.vertex.y + ",'')" )
     
     //    GO.place(GO.vertex.x, GO.vertex.y, '')
 }
 
-GO.place2 = function (x, y, n) {
+GO.place = function (x, y, n) {
     var color;
-    if (n === 0) {}
-}
-
-GO.place = function (x, y) {
-    var color;
-    if (GO.state[y][x] === '.') {
-	color = GO.cursor;
-	GO.state[y][x] = color.charAt(0);
-	console.log("Color " + color + ", code " + GO.state[y][x]);
-    } else if (GO.state[y][x] === 'w') {
-	GO.state[y][x] = '.';
-	color = 'empty';
-    } else if (GO.state[y][x] === 'b') {
-	GO.state[y][x] = 'w';
-	color = 'empty';
+    if (n === '') {
+	if (GO.state[y][x] === '.') {
+	    GO.state[y][x] = 'b';
+	    color = 'black';
+	} else if (GO.state[y][x] === 'w') {
+	    GO.state[y][x] = '.';
+	    color = 'empty';
+	} else if (GO.state[y][x] === 'b') {
+	    GO.state[y][x] = 'w';
+	    color = 'white';
+	} else {
+	    return; // Don't override initial stones
+	}
     } else {
-	return; // Don't override initial stones
+	color = 'white';
     }
-    GO.update_board(color, x, y, '');
-}
 
-// n: number on starting white piece
-GO.update_board = function (color, x, y, n) {
-    $(GO.id).innerHTML +=
-
-    '<div class="stone '
-    + color 
-    + '" style="'
-    + 'margin-top : '
-    + GO.square * (y - GO.height + 1/2)
-    + 'px; margin-left : '
-    + GO.square * (x - 1/2)
-    + 'px;'
-    + 'vertical-align: super; padding-top: -10;'
-    + '">'
-    + n
-    + '</div>';
+    var oldid = "x" + x + "y" + y;
+    console.log(oldid + " " + color);
+    var oldnode = $(oldid);
+    if (oldnode) {
+	oldnode.className = "stone " + color;
+    }
+    else {
+	var style = 'margin-top : '
+	+ GO.square * (y - GO.height + 1/2)
+	+ 'px; margin-left : '
+	+ GO.square * (x - 1/2)
+	+ 'px;'
+	+ 'vertical-align: super; padding-top: -10;'
+	;
+	var stone = new Element('div', {
+		"class" : "stone " + color,
+		"id" : "x" + x + "y" + y,
+		"style" : style
+	    });
+	stone.innerHTML = n;
+	$(GO.id).insert(stone);
+	/*	    
+	$(GO.id).innerHTML +=
+	
+	'<div class="stone '
+	+ color 
+	+ '" style="'
+	+ 'margin-top : '
+	+ GO.square * (y - GO.height + 1/2)
+	+ 'px; margin-left : '
+	+ GO.square * (x - 1/2)
+	+ 'px;'
+	+ 'vertical-align: super; padding-top: -10;"'
+	+ ' id="x' + x + 'y' + y + '"'
+	+ '>'
+	+ n
+	+ '</div>';
+	*/
+    }
 }
 
 GO.init('board');
