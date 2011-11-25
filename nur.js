@@ -90,10 +90,20 @@ GO.respondToClick = function (event) {
     GO.change(GO.vertex.x, GO.vertex.y, GO.pickColor(GO.vertex.x, GO.vertex.y));
     if (GO.state[GO.vertex.y][GO.vertex.x+1] === 'b') {
 	GO.change(GO.vertex.x+1, GO.vertex.y, GO.getBlackStyle(GO.vertex.x+1, GO.vertex.y));
+    } else if (GO.isWhite(GO.vertex.x+1,GO.vertex.y)) {
+	GO.change(GO.vertex.x+1, GO.vertex.y, GO.getWhiteStyle(GO.vertex.x+1, GO.vertex.y));
     }
     if (GO.state[GO.vertex.y][GO.vertex.x-1] === 'b') {
 	GO.change(GO.vertex.x-1, GO.vertex.y, GO.getBlackStyle(GO.vertex.x-1, GO.vertex.y));
+    } else if (GO.isWhite(GO.vertex.x-1, GO.vertex.y)) {
+	GO.change(GO.vertex.x-1, GO.vertex.y, GO.getWhiteStyle(GO.vertex.x-1, GO.vertex.y));
     }
+}
+
+GO.isWhite = function (x, y) {
+   return (GO.state[y][x] === 'w'
+	   || (GO.state[y][x] >= '1'
+	       && GO.state[y][x] <= '9'));
 }
 
 GO.getBlackStyle = function(x, y) {
@@ -108,6 +118,18 @@ GO.getBlackStyle = function(x, y) {
     return color;
 }
 
+GO.getWhiteStyle = function(x, y) {
+    var color = 'white';
+    if (GO.isWhite(x+1, y) && ! GO.isWhite(x-1, y)) {
+	color = 'w6';
+    } else if (GO.isWhite(x-1, y) && ! GO.isWhite(x+1, y)) {
+	color = 'w4';
+    } else if (GO.isWhite(x-1, y) && GO.isWhite(x, y)) {
+	color = 'w46';
+    }
+    return color;
+}
+
 GO.pickColor = function(x, y) {
     if (GO.state[y][x] === '.') {
 	GO.state[y][x] = 'b';
@@ -117,7 +139,7 @@ GO.pickColor = function(x, y) {
 	color = 'empty';
     } else if (GO.state[y][x] === 'b') {
 	GO.state[y][x] = 'w';
-	color = 'white';
+	color = GO.getWhiteStyle(x, y);
     } else {
 	return; // Don't override initial stones
     }
