@@ -36,20 +36,22 @@ GO.puzzle = [
 	     ];
 GO.glog = function (msg) { $('log').innerHTML += '[' + msg + ']'; };
 
-GO.getPuzzle = function (id) {
-    new Ajax.Request('5.txt',
+GO.getPuzzle = function (board, puz) {
+    //  new Ajax.Request('s.txt',
+                new Ajax.Request('/cgi-bin/get-puzzle.cgi?puzzle=' + puz,
 		     {
 		       method:'get',
 		       onSuccess: function(transport){
 			   var response = transport.responseText || "no response text";
 			   var i;
+			   var size = 9;
 			   GO.puzzle = new Array();
-			   for (i = 0; i < 9; ++i) {
-			       GO.puzzle[i] = transport.responseText.substring(i*9, (i+1)*9);
+			   for (i = 0; i < size; ++i) {
+			       GO.puzzle[i] = transport.responseText.substring(i*size, (i+1)*size);
 			   }
-			   GO.init(id);
+			   GO.init(board);
 		       },
-		       onFailure: function(){ alert('Using default puzzle') }
+		       onFailure: function(){ alert('Using default puzzle'); GO.init(board); }
 		     });
 }
 
@@ -191,5 +193,5 @@ GO.change = function (x, y, color) {
     }
 }
 
-GO.getPuzzle('board');
+GO.getPuzzle('board', 1);
 //GO.init('board');
