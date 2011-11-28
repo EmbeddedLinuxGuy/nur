@@ -45,9 +45,12 @@ GO.getPuzzle = function (board, puz) {
 			   var response = transport.responseText || "no response text";
 			   var i;
 			   var size = 9;
+			   GO.solved = new Array();
 			   GO.puzzle = new Array();
 			   for (i = 0; i < size; ++i) {
-			       GO.puzzle[i] = transport.responseText.substring(i*size, (i+1)*size);
+			       GO.solved[i] = transport.responseText.substring(i*size, (i+1)*size);
+			       GO.puzzle[i] = GO.solved[i].replace(/#/g, ".");
+			       GO.puzzle[i] = GO.puzzle[i].replace(/ /g, ".");
 			   }
 			   GO.init(board);
 		       },
@@ -88,8 +91,8 @@ GO.init = function (id) {
     y = offset[1];
     GO.origin = {x : x, y : y};
     //    GO.glog(GO.origin.x + "," + GO.origin.y);
-
-    $('board').observe('click', GO.respondToClick);
+    GO.timeout = new Array();
+    $(GO.id).observe('click', GO.respondToClick);
 }
 
 GO.respondToClick = function (event) {
@@ -105,8 +108,9 @@ GO.respondToClick = function (event) {
 
     // call publish
     //    conn.publish('chat', "GO.place(" + GO.vertex.x + "," + GO.vertex.y + ",'')" )
-    
-    GO.change(GO.vertex.x, GO.vertex.y, GO.pickColor(GO.vertex.x, GO.vertex.y));
+
+    var color = GO.pickColor(GO.vertex.x, GO.vertex.y);
+    GO.change(GO.vertex.x, GO.vertex.y, color);
     if (GO.state[GO.vertex.y][GO.vertex.x+1] === 'b') {
 	GO.change(GO.vertex.x+1, GO.vertex.y, GO.getBlackStyle(GO.vertex.x+1, GO.vertex.y));
     } else if (GO.isWhite(GO.vertex.x+1,GO.vertex.y)) {
@@ -117,21 +121,28 @@ GO.respondToClick = function (event) {
     } else if (GO.isWhite(GO.vertex.x-1, GO.vertex.y)) {
 	GO.change(GO.vertex.x-1, GO.vertex.y, GO.getWhiteStyle(GO.vertex.x-1, GO.vertex.y));
     }
+    GO.change(GO.vertex.x, GO.vertex.y, color); // in case we got a goblin
 }
 
 GO.isWhite = function (x, y) {
-   return (GO.state[y][x] === 'w'
-	   || (GO.state[y][x] >= '1'
-	       && GO.state[y][x] <= '9'));
+    return (GO.state[y][x] === 'w'
+        	   || (GO.state[y][x] >= '1'
+		       && GO.state[y][x] <= '9'));
+}
+
+GO.isBlack = function (x, y) {
+    return (GO.state[y][x] === 'b');
+    //	   || (GO.state[y][x] >= '1'
+    //	       && GO.state[y][x] <= '9'));
 }
 
 GO.getBlackStyle = function(x, y) {
     var color = 'black';
-    if (GO.state[y][x+1] === 'b' && GO.state[y][x-1] !== 'b') {
+    if (GO.isBlack(x+1, y) && ! GO.isBlack(x-1, y)) {
 	color = 'b6';
-    } else if (GO.state[y][x-1] === 'b' && GO.state[y][x+1] !== 'b') {
+    } else if (GO.isBlack(x-1, y) && ! GO.isBlack(x+1, y)) {
 	color = 'b4';
-    } else if (GO.state[y][x-1] === 'b' && GO.state[y][x] === 'b') {
+    } else if (GO.isBlack(x-1, y) && GO.isBlack(x+1, y)) {
 	color = 'b46';
     }
     return color;
@@ -179,7 +190,7 @@ GO.add = function(x, y, n) {
 	    "id" : "x" + x + "y" + y,
 	    "style" : style
 	});
-    stone.innerHTML = n;
+    stone.innerHTML = "<br />" + n;
     $(GO.id).insert(stone);
 }
 
@@ -188,6 +199,22 @@ GO.change = function (x, y, color) {
     var oldnode = $(oldid);
     if (oldnode) {
 	oldnode.className = "stone " + color;
+	// get rid of goblin if there is one
+	if (oldnode.innerHTML) {
+	    // but don't get rid of numbered stones
+	    var lastchar = oldnode.innerHTML[oldnode.innerHTML.length-1];
+	    if (lastchar < '1' || lastchar > '9') {
+		oldnode.innerHTML = '';
+	    }
+	}
+	if (GO.timeout[oldid]) {
+	    clearTimeout(GO.timeout[oldid]);
+	}
+	if (color[0] === 'w' && GO.solved[y][x] === '#') {
+	    GO.timeout[oldid] = setTimeout("$(x"+x+"y"+y+").innerHTML = "
+					   + "'<img src=\"goblin.png\" />';",
+		       3000);
+	}
     } else {
 	console.log("Error: no node " + oldid);
     }
