@@ -21,19 +21,18 @@
 .stone {
     width: 50px;
     height: 50px;
-    font-size: 50px;
+/*    font-size: 50px; */
     text-align: center;
+    color: #ffffff;
     position: absolute;
 }
 
 .white {
-/*      background-image: url('white50.png');*/
-      background: url('white50.png');
+      background-image: url('white/5.png');
 }
 
 .black {
-/*    background-image: url('black50.png');*/
-    background: url('black50.png');
+    background-image: url('black/5.png');
 }
 
 .empty {
@@ -41,26 +40,26 @@
 }
 
 .b6 {
-    background-image: url('b6.png');
+    background-image: url('black/6.png');
 }
 
 .b4 {
-    background-image: url('b4.png');
+    background-image: url('black/4.png');
 }
 
 .b46 {
-    background-image: url('b46.png');
+    background-image: url('black/46.png');
 }
 
 
 .w6 {
-    background-image: url('w6.png');
+    background-image: url('white/6.png');
 }
 
 .w4 {
-    background-image: url('w4.png');
+    background-image: url('white/4.png');
 }
 
 .w46 {
-    background-image: url('w46.png');
+    background-image: url('white/46.png');
 }
