@@ -95,6 +95,25 @@ GO.init = function (id) {
     $(GO.id).observe('click', GO.respondToClick);
 }
 
+// called by: GO.respondToClick, conn.onSubscribed
+// calls: GO.change
+
+GO.place = function (x, y) {
+    var color = GO.pickColor(x, y);
+    GO.change(x, y, color);
+    if (GO.isBlack(x+1, y)) {
+	GO.change(x+1, y, GO.getBlackStyle(x+1, y));
+    } else if (GO.isWhite(x+1, y)) {
+	GO.change(x+1, y, GO.getWhiteStyle(x+1, y));
+    }
+    if (GO.isBlack(x-1, y)) {
+	GO.change(x-1, y, GO.getBlackStyle(x-1, y));
+    } else if (GO.isWhite(x-1, y)) {
+	GO.change(x-1, y, GO.getWhiteStyle(x-1, y));
+    }
+    GO.change(x, y, color); // in case we got a goblin
+}
+
 GO.respondToClick = function (event) {
     GO.current = { x : event.pointerX() - GO.origin.x,
 		   y : event.pointerY() - GO.origin.y
@@ -107,21 +126,8 @@ GO.respondToClick = function (event) {
     //    GO.glog(GO.vertex.x);
 
     // call publish
-    //    conn.publish('chat', "GO.place(" + GO.vertex.x + "," + GO.vertex.y + ",'')" )
-
-    var color = GO.pickColor(GO.vertex.x, GO.vertex.y);
-    GO.change(GO.vertex.x, GO.vertex.y, color);
-    if (GO.state[GO.vertex.y][GO.vertex.x+1] === 'b') {
-	GO.change(GO.vertex.x+1, GO.vertex.y, GO.getBlackStyle(GO.vertex.x+1, GO.vertex.y));
-    } else if (GO.isWhite(GO.vertex.x+1,GO.vertex.y)) {
-	GO.change(GO.vertex.x+1, GO.vertex.y, GO.getWhiteStyle(GO.vertex.x+1, GO.vertex.y));
-    }
-    if (GO.state[GO.vertex.y][GO.vertex.x-1] === 'b') {
-	GO.change(GO.vertex.x-1, GO.vertex.y, GO.getBlackStyle(GO.vertex.x-1, GO.vertex.y));
-    } else if (GO.isWhite(GO.vertex.x-1, GO.vertex.y)) {
-	GO.change(GO.vertex.x-1, GO.vertex.y, GO.getWhiteStyle(GO.vertex.x-1, GO.vertex.y));
-    }
-    GO.change(GO.vertex.x, GO.vertex.y, color); // in case we got a goblin
+    conn.publish('chat', "GO.place(" + GO.vertex.x + "," + GO.vertex.y + ")" )
+    //    GO.place(GO.vertex.x, GO.vertex.y);
 }
 
 GO.isWhite = function (x, y) {
@@ -194,6 +200,8 @@ GO.add = function(x, y, n) {
     $(GO.id).insert(stone);
 }
 
+// called by: GO.place
+
 GO.change = function (x, y, color) {
     var oldid = "x" + x + "y" + y;
     var oldnode = $(oldid);
@@ -211,7 +219,7 @@ GO.change = function (x, y, color) {
 	    clearTimeout(GO.timeout[oldid]);
 	}
 	if (color[0] === 'w' && GO.solved[y][x] === '#') {
-	    GO.timeout[oldid] = setTimeout("$(x"+x+"y"+y+").innerHTML = "
+	    GO.timeout[oldid] = setTimeout("$(\""+oldid+"\").innerHTML = "
 					   + "'<img src=\"goblin.png\" />';",
 		       3000);
 	}
