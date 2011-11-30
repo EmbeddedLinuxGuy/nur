@@ -16,7 +16,7 @@ body { font: 16px Helvetica, Arial, sans-serif; font-weight: bold; padding: 40px
 </head>
 <body>
 
-Let's Play Nurikabe
+Let's Play Magic Landscaper
 <br>
 <input type="text" size="5" id="puznum" value="1" />
 <input type="button" onClick="GO.getPuzzle('board',document.getElementById('puznum').value);" />
@@ -73,12 +73,15 @@ conn.onSubscribed = function(name, subscription) {
 			parseDateTime(args.datetime) + ' '
 			+ args.user + ': '
 			+ args.payload);
-		if (args.payload.charAt(0) === 'G' ) { eval(args.payload);   }
-		historyEl.insertBefore(elt('<div>'), historyEl.firstChild)
-			.appendChild(msg);
+		if (args.payload.charAt(0) === 'G' ) {
+		    eval(args.payload);
+		} else {
+		    historyEl.insertBefore(elt('<div>'), historyEl.firstChild)
+		    .appendChild(msg);
+		}
 	}
 }
-
+ 
 conn.subscribe('chat');
 </script>
 <!-- <script src="prototype-1.6.0.2.js"></script> -->
