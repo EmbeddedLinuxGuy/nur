@@ -30,7 +30,7 @@ Let's Play Magic Landscaper
 
 <div class="box" id="history"></div>
 <input class="box" id="msg">
-
+<input id="restart" type="button" value="Restart Server" onclick="restartServer()" />
 <script src="http://modernhacker.com:8001/static/hookbox.js"></script>
 <script src="prototype.js"></script>
 <script src="nur.js"></script>
@@ -83,6 +83,17 @@ conn.onSubscribed = function(name, subscription) {
 }
  
 conn.subscribe('chat');
+
+function restartServer (button) {
+  $('restart').disabled = true;
+  new Ajax.Request('/cgi-bin/restart-hookbox',
+    {
+      method: 'get',
+      onSuccess: function (t) {$('restart').disabled = false;},
+      onFailure: function () {alert("Could not restart"); $('restart').disabled = false; }
+   });
+}
+
 </script>
 <!-- <script src="prototype-1.6.0.2.js"></script> -->
 </body>
