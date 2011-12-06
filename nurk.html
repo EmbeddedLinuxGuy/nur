@@ -1,7 +1,7 @@
 <!doctype html>
 <html>
 <head>
- <title>Nurikabe</title>
+ <title>Magic Landscaper</title>
  <link rel="stylesheet" href="nur.css" type="text/css">
 <style>
 body { font: 16px Helvetica, Arial, sans-serif; font-weight: bold; padding: 40px; background: #88A;
@@ -24,13 +24,13 @@ Let's Play Magic Landscaper
 <!-- <a href="nur96.png">solution</a> -->
 <br><br><br>
   <div style="margin-left: 50px">
-    <div style="float:right">Rules for Magic Landscaping
+    <div id="zen" style="float:right">The Zen of Magic Landscaping
       <ol>
-	<li>Each pond will contain one number: the size of the pond
-	  <li>Water areas will connect to make ponds, each surrounded by a wall
+	<li>Each pond contains one number: the size of the pond
+	  <li>Water areas connect to make ponds, each surrounded by a wall
 	    <li>Castle areas connect into a single wall, branching out to separate the ponds
 	    <li>There are no double-thick wall areas - each 2x2 area will contain at least one water
-	    <li>Connections are made up, down, left, or right along the lines - not diagonal
+	    <li>Connections are made up, down, left, or right along the lines - not diagonally
       </ol>
       Warning: if you dig a pond where there should be a wall, a goblin will inhabit it!
     </div>
@@ -40,24 +40,23 @@ Let's Play Magic Landscaper
 
 <div class="box" id="history"></div>
 <input class="box" id="msg">
-<input id="restart" type="button" value="Restart Server" onclick="restartServer()" />
+<div class="clickme" id="multiplayer">MULTIPLAYER</div>
 <script src="http://modernhacker.com:8001/static/hookbox.js"></script>
 <script src="prototype.js"></script>
 <script src="nur.js"></script>
 <script>
-var toggle = "white";
-/*
-$("board").oncontextmenu = function(e) {
-  if (toggle === "white") {
-    document.body.style.cursor = "url(cursor2.cur) 25 25, default"; 
-    toggle = "black";
-  } else {
-    document.body.style.cursor = "url(cursor.cur) 25 25, default";
-    toggle = "white";
-  }
-  return false;
-}
-*/
+$("multiplayer").observe("click", function () {
+  GO.multiplayer = true;
+  $("multiplayer").innerHTML = "You're online";
+  var input = new Element("input", {
+    "id" : "restart",
+    "type" : "button",
+    "value" : "Restart Server",
+    "onclick" : "restartServer()"
+  });
+  $("multiplayer").insert(input);
+//<input id="restart" type="button" value="Restart Server" onclick="restartServer()" />
+});
 // UTILITY
 elt = function(id) { return /^</.test(id) ? document.createElement(id.substring(1, id.length - 1)) : document.getElementById(id); }
 parseDateTime = function(datetime) { var d = new Date(Date.parse(datetime.replace('T', ' ').replace(/\-/g, '/'))), h = d.getHours(), m = d.getMinutes(), s = d.getSeconds(); if (m < 10) { m = '0' + m; }; if (s < 10) { s = '0' + s; }; return [h, m, s].join(':'); }
@@ -84,7 +83,9 @@ conn.onSubscribed = function(name, subscription) {
 			+ args.user + ': '
 			+ args.payload);
 		if (args.payload.charAt(0) === 'G' ) {
-		    eval(args.payload);
+                    if (GO.multiplayer) {
+		      eval(args.payload);
+                    }
 		} else {
 		    historyEl.insertBefore(elt('<div>'), historyEl.firstChild)
 		    .appendChild(msg);
@@ -93,6 +94,7 @@ conn.onSubscribed = function(name, subscription) {
 }
  
 conn.subscribe('chat');
+conn.publish('chat', 'has joined the room');
 
 function restartServer (button) {
   $('restart').disabled = true;
