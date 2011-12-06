@@ -97,6 +97,7 @@ GO.init = function (id) {
     //    GO.glog(GO.origin.x + "," + GO.origin.y);
     GO.timeout = new Array();
     $(GO.id).observe('click', GO.respondToClick);
+    GO.ponds = new Array();
 }
 
 // called by: GO.respondToClick, conn.onSubscribed
@@ -105,6 +106,7 @@ GO.init = function (id) {
 GO.place = function (x, y) {
     var color = GO.pickColor(x, y);
     GO.change(x, y, color);
+    // change how neighbors look if needed
     if (GO.isBlack(x+1, y)) {
 	GO.change(x+1, y, GO.getBlackStyle(x+1, y));
     } else if (GO.isWhite(x+1, y)) {
@@ -115,7 +117,8 @@ GO.place = function (x, y) {
     } else if (GO.isWhite(x-1, y)) {
 	GO.change(x-1, y, GO.getWhiteStyle(x-1, y));
     }
-    GO.change(x, y, color); // in case we got a goblin
+    // in case we got a goblin
+    GO.change(x, y, color);
 }
 
 GO.respondToClick = function (event) {
@@ -134,7 +137,74 @@ GO.respondToClick = function (event) {
     //    GO.place(GO.vertex.x, GO.vertex.y);
 }
 
+GO.possiblePonds = function (event) {
+    var px = event.pointerX() - GO.origin.x;
+    var py = event.pointerY() - GO.origin.y;
+    var x = Math.round(px/GO.square);
+    var y = Math.round(py/GO.square);
+
+    if (y > 0 && GO.puzzle[y-1][x] === '.'
+	&& !GO.isWhite(x-1, y-1)
+	&& !GO.isWhite(x+1, y-1)
+	&& !GO.isWhite(x, y-2)) {
+	var oldid = "x" + x + "y" + (y-1);
+	var oldnode = $(oldid);
+	if (oldnode) {
+	    oldnode.className = "stone aqua";
+	    GO.ponds.push(oldnode);
+	}
+    }
+    if (y < GO.height-1 && GO.puzzle[y+1][x] === '.'
+	&& !GO.isWhite(x-1, y+1)
+	&& !GO.isWhite(x+1, y+1)
+	&& !GO.isWhite(x, y+2)) {
+	var oldid = "x" + x + "y" + (y+1);
+	var oldnode = $(oldid);
+	if (oldnode) {
+	    oldnode.className = "stone aqua";
+	    GO.ponds.push(oldnode);
+	}
+    }	
+    if (x > 0 && GO.puzzle[y][x-1] === '.'
+	&& !GO.isWhite(x-1, y+1)
+	&& !GO.isWhite(x-1, y-1)
+	&& !GO.isWhite(x-2, y)) {
+	var oldid = "x" + (x-1) + "y" + y;
+	var oldnode = $(oldid);
+	if (oldnode) {
+	    oldnode.className = "stone aqua";
+	    GO.ponds.push(oldnode);
+	}
+    }	
+    if (x < GO.height-1 && GO.puzzle[y][x+1] === '.'
+	&& !GO.isWhite(x+1, y+1)
+	&& !GO.isWhite(x+1, y-1)
+	&& !GO.isWhite(x+2, y)) {
+	var oldid = "x" + (x+1) + "y" + y;
+	var oldnode = $(oldid);
+	if (oldnode) {
+	    oldnode.className = "stone aqua";
+	    GO.ponds.push(oldnode);
+	}
+    }	
+}
+
+GO.clearPossiblePonds = function (event) {
+    var px = event.pointerX() - GO.origin.x;
+    var py = event.pointerY() - GO.origin.y;
+    var x = Math.round(px/GO.square);
+    var y = Math.round(py/GO.square);
+    if (GO.ponds) {
+	var i;
+	for (i=0; i < GO.ponds.length; ++i) {
+	    GO.ponds[i].className = "stone empty";
+	}
+	GO.ponds = new Array();
+    }
+}
+
 GO.isWhite = function (x, y) {
+    if (y < 0 || y >= GO.height) { return false; }
     return (GO.state[y][x] === 'w'
         	   || (GO.state[y][x] >= '1'
 		       && GO.state[y][x] <= '9'));
@@ -194,14 +264,19 @@ GO.add = function(x, y, n) {
     + 'px;'
     + 'vertical-align: super; padding-top: -10;'
     ;
-    if (n === '.') { color = 'empty'; n = ''; } else { color = 'white'; }
+    var color;
+    if (n === '.') { color = 'empty'; } else { color = 'white'; }
     var stone = new Element('div', {
 	    "class" : "stone " + color,
 	    "id" : "x" + x + "y" + y,
 	    "style" : style
 	});
-    stone.innerHTML = "<br />" + n;
     $(GO.id).insert(stone);
+    if (n >= '1' && n <= '9') {
+	stone.innerHTML = "<br />" + n;
+	stone.observe('mouseover', GO.possiblePonds);
+	stone.observe('mouseout', GO.clearPossiblePonds);
+    } 
 }
 
 // called by: GO.place
@@ -214,6 +289,7 @@ GO.change = function (x, y, color) {
 	// get rid of goblin if there is one
 	if (oldnode.innerHTML) {
 	    // but don't get rid of numbered stones
+	    // should we even be here if the user clicks a numbered stone?
 	    var lastchar = oldnode.innerHTML[oldnode.innerHTML.length-1];
 	    if (lastchar < '1' || lastchar > '9') {
 		oldnode.innerHTML = '';
@@ -232,5 +308,8 @@ GO.change = function (x, y, color) {
     }
 }
 
-GO.getPuzzle('board', 1);
-//GO.init('board');
+if (window.location.toString().substring(0, 7) === "file://") {
+    GO.init('board');
+} else {
+    GO.getPuzzle('board', 1);
+}
