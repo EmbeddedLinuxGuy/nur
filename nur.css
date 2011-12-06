@@ -67,3 +67,13 @@
 .aqua {
     background-image: url('aqua.png');
 }
+
+.clickme {
+  border: 1px solid black;
+  display: inline-block;
+  font-family: Helvetica,Arial,sans-serif;
+  font-weight: bold;
+  background-color: #000000;
+  color: #ffffff;
+}
+

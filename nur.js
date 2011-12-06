@@ -4,7 +4,8 @@ var GO = {
     current : { x : 0, y : 0},
     state : [],
     id : null,
-    cursor : "white"
+    cursor : "white",
+    multiplayer: false
 };
 
 GO.puzzle = [
@@ -133,10 +134,10 @@ GO.respondToClick = function (event) {
     //    GO.glog(GO.vertex.x);
 
     // call publish
-    if (window.location.toString().substring(0, 7) === "file://") {
-        GO.place(GO.vertex.x, GO.vertex.y);
-    } else {
+    if (GO.multiplayer) {
 	conn.publish('chat', "GO.place(" + GO.vertex.x + "," + GO.vertex.y + ")" );
+    } else {
+        GO.place(GO.vertex.x, GO.vertex.y);
     }
 }
 
@@ -316,6 +317,7 @@ GO.change = function (x, y, color) {
 }
 
 if (window.location.toString().substring(0, 7) === "file://") {
+  $('zen').style.float = "none";
     GO.init('board');
 } else {
     GO.getPuzzle('board', 1);
