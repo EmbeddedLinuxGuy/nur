@@ -58,6 +58,10 @@ GO.getPuzzle = function (board, puz) {
 		     });
 }
 
+GO.tutorial = function () {
+    GO.init('tutorial');
+}
+
 GO.init = function (id) {
     var x, y, divHTML = '';
     var temp;
