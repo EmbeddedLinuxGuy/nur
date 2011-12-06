@@ -128,13 +128,16 @@ GO.respondToClick = function (event) {
     GO.vertex = { x : Math.round(GO.current.x/GO.square),
 		  y : Math.round(GO.current.y/GO.square)
     };
-    console.log(GO.vertex.x + ", " + GO.vertex.y);
+//    console.log(GO.vertex.x + ", " + GO.vertex.y);
     //    GO.glog(GO.state[GO.vertex.y][GO.vertex.x]);
     //    GO.glog(GO.vertex.x);
 
     // call publish
-    conn.publish('chat', "GO.place(" + GO.vertex.x + "," + GO.vertex.y + ")" )
-    //    GO.place(GO.vertex.x, GO.vertex.y);
+    if (window.location.toString().substring(0, 7) === "file://") {
+        GO.place(GO.vertex.x, GO.vertex.y);
+    } else {
+	conn.publish('chat', "GO.place(" + GO.vertex.x + "," + GO.vertex.y + ")" );
+    }
 }
 
 GO.possiblePonds = function (event) {
@@ -148,6 +151,7 @@ GO.possiblePonds = function (event) {
 	&& !GO.isWhite(x+1, y-1)
 	&& !GO.isWhite(x, y-2)) {
 	var oldid = "x" + x + "y" + (y-1);
+	console.log(oldid);
 	var oldnode = $(oldid);
 	if (oldnode) {
 	    oldnode.className = "stone aqua";
@@ -159,6 +163,7 @@ GO.possiblePonds = function (event) {
 	&& !GO.isWhite(x+1, y+1)
 	&& !GO.isWhite(x, y+2)) {
 	var oldid = "x" + x + "y" + (y+1);
+	console.log(oldid);
 	var oldnode = $(oldid);
 	if (oldnode) {
 	    oldnode.className = "stone aqua";
@@ -170,17 +175,19 @@ GO.possiblePonds = function (event) {
 	&& !GO.isWhite(x-1, y-1)
 	&& !GO.isWhite(x-2, y)) {
 	var oldid = "x" + (x-1) + "y" + y;
+	console.log(oldid);
 	var oldnode = $(oldid);
 	if (oldnode) {
 	    oldnode.className = "stone aqua";
 	    GO.ponds.push(oldnode);
 	}
     }	
-    if (x < GO.height-1 && GO.puzzle[y][x+1] === '.'
+    if (x < GO.width-1 && GO.puzzle[y][x+1] === '.'
 	&& !GO.isWhite(x+1, y+1)
 	&& !GO.isWhite(x+1, y-1)
 	&& !GO.isWhite(x+2, y)) {
 	var oldid = "x" + (x+1) + "y" + y;
+	console.log(oldid);
 	var oldnode = $(oldid);
 	if (oldnode) {
 	    oldnode.className = "stone aqua";
@@ -274,8 +281,8 @@ GO.add = function(x, y, n) {
     $(GO.id).insert(stone);
     if (n >= '1' && n <= '9') {
 	stone.innerHTML = "<br />" + n;
-	stone.observe('mouseover', GO.possiblePonds);
-	stone.observe('mouseout', GO.clearPossiblePonds);
+//	stone.observe('mouseover', GO.possiblePonds);
+//	stone.observe('mouseout', GO.clearPossiblePonds);
     } 
 }
 
