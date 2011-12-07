@@ -60,7 +60,26 @@ GO.getPuzzle = function (board, puz) {
 }
 
 GO.tutorial = function () {
-    GO.init('tutorial');
+    var img = new Element("img", { "src" : "empty.png", "id" : "emptypic" } );
+    var txt = new Element("div", { "id" : "tuttext" });
+    $("tutorial").insert(txt);
+    txt.innerHTML = "Fill every space with walls and ponds. Click again to see the finished garden.";
+    $("tutorial").insert(img);
+
+    $("tutstart").stopObserving("click", GO.tutorial);
+    $("tutstart").observe("click", GO.endTutorial);
+    $("tuttext").observe("click", GO.endTutorial);
+    $("emptypic").observe("click", GO.endTutorial);
+}
+
+GO.endTutorial = function () {
+    $("tutorial").innerHTML = "";
+
+    var img = new Element("img", { "src" : "full.png" } );
+    var txt = new Element("div", { "id" : "tuttext" });
+    $("tutorial").insert(txt);
+    txt.innerHTML = "You're ready to play! Watch out for goblins.";
+    $("tutorial").insert(img);
 }
 
 GO.init = function (id) {
@@ -317,7 +336,7 @@ GO.change = function (x, y, color) {
 }
 
 if (window.location.toString().substring(0, 7) === "file://") {
-  $('zen').style.float = "none";
+    if ($("zen")) { $("zen").style.float = "none"; }
     GO.init('board');
 } else {
     GO.getPuzzle('board', 1);
