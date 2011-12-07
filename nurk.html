@@ -21,7 +21,6 @@ Let's Play Magic Landscaper
 <input type="text" size="5" id="puznum" value="1" />
 <input type="button" onClick="GO.getPuzzle('board',document.getElementById('puznum').value);" />
 
-<!-- <a href="nur96.png">solution</a> -->
 <br><br><br>
   <div style="margin-left: 50px">
     <div id="zen" style="float:right">The Zen of Magic Landscaping
@@ -33,14 +32,14 @@ Let's Play Magic Landscaper
 	    <li>Connections are made up, down, left, or right along the lines - not diagonally
       </ol>
       Warning: if you dig a pond where there should be a wall, a goblin will inhabit it!
+<div class="box" id="history"></div>
+<input class="box" id="msg">
+<div class="clickme" id="multiplayer" style="float:right">JOIN MULTIPLAYER</div>
     </div>
     <div id="board"></div>
   </div>
   <div id="log"></div>
 
-<div class="box" id="history"></div>
-<input class="box" id="msg">
-<div class="clickme" id="multiplayer">MULTIPLAYER</div>
 <script src="http://modernhacker.com:8001/static/hookbox.js"></script>
 <script src="prototype.js"></script>
 <script src="nur.js"></script>
