@@ -124,7 +124,7 @@ GO.init = function (id) {
 // calls: GO.change
 
 GO.place = function (x, y) {
-//    if (GO.puzzle[y][x] >= '1' && GO.puzzle[y][x] <= '9') {return;}
+    if (GO.puzzle[y][x] >= '1' && GO.puzzle[y][x] <= '9') {return;}
 
     var color = GO.pickColor(x, y);
     GO.change(x, y, color);
