@@ -6,21 +6,20 @@
 body {
   text-align: center;
 }
-.clickme {
-  border: 1px solid black;
-  display: inline-block;
-  font-family: Helvetica,Arial,sans-serif;
-  font-weight: bold;
-  background-color: #000000;
-  color: #ffffff;
-}
-
 </style>
+<link rel="stylesheet" href="nur.css" type="text/css">
 </head>
+<script src="prototype.js"></script>
+<script src="nur.js"></script>
 <body>
 <img src="magic.jpg" />
 <br />
   <a href="nurk.html"><div class="clickme">PLAY</div></a>
-  <div class="clickme">TUTORIAL</div>
+  <div id="tutstart" class="clickme">TUTORIAL</div>
+<br />
+  <div id="tutorial"></id>
+<script>
+$("tutstart").observe("click", GO.tutorial);
+</script>
 </body>
 </html>
