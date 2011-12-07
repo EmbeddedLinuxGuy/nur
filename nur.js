@@ -124,6 +124,8 @@ GO.init = function (id) {
 // calls: GO.change
 
 GO.place = function (x, y) {
+//    if (GO.puzzle[y][x] >= '1' && GO.puzzle[y][x] <= '9') {return;}
+
     var color = GO.pickColor(x, y);
     GO.change(x, y, color);
     // change how neighbors look if needed
@@ -316,7 +318,6 @@ GO.change = function (x, y, color) {
 	// get rid of goblin if there is one
 	if (oldnode.innerHTML) {
 	    // but don't get rid of numbered stones
-	    // should we even be here if the user clicks a numbered stone?
 	    var lastchar = oldnode.innerHTML[oldnode.innerHTML.length-1];
 	    if (lastchar < '1' || lastchar > '9') {
 		oldnode.innerHTML = '';
